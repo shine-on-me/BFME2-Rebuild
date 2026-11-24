@@ -316,6 +316,26 @@ void Team::rva0039DB31(const void *arg)
 }
 
 // FUNCTION: BFME2 0x0039DB89 size=124 name=?countObjectsByThingTemplate@Team@@QBEXHPBQBVThingTemplate@@_NPAH1@Z evidence=N:ledger tier=A
+void Team::countObjectsByThingTemplate(Int numTemplates, const ThingTemplate *const *templates, Bool ignoreDead, Int *counts, Bool ignoreUnderConstruction) const
+{
+	DLINK_ITERATOR<Object> iter = iterate_TeamMemberList();
+	for (; !iter.done(); iter.advance())
+	{
+		Object *obj = iter.cur();
+		const ThingTemplate *tmpl = obj->getTemplate();
+		for (Int i = 0; i < numTemplates; ++i)
+		{
+			if (!tmpl->isEquivalentTo(templates[i]))
+				continue;
+			if (ignoreDead && obj->isEffectivelyDead())
+				continue;
+			if (ignoreUnderConstruction && obj->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+				continue;
+			++counts[i];
+			break;
+		}
+	}
+}
 
 // FUNCTION: BFME2 0x0039DC05 size=94 name=?rva0039DC05@Team@@QBEHH_N0@Z evidence=?:placeholder tier=A
 
